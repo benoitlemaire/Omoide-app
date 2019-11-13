@@ -1,11 +1,6 @@
 <template>
   <div>
-    <button
-      v-bind="$attrs"
-      class="button"
-      :class="buttonClass"
-      v-on="$listeners"
-    >
+    <button v-bind="$attrs" :class="buttonClass" v-on="$listeners" class="button">
       <slot />
     </button>
   </div>
@@ -20,7 +15,7 @@ export default {
       default: ''
     }
   }
-}
+};
 </script>
 
 <style scoped></style>

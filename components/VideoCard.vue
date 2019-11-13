@@ -1,10 +1,6 @@
 <template>
   <div class="column is-one-quarter">
-    <div
-      class="card"
-      @mouseover="isHovering = true"
-      @mouseleave="isHovering = false"
-    >
+    <div class="card" @mouseover="isHovering = true" @mouseleave="isHovering = false">
       <div class="card-image">
         <figure class="image is-4by3">
           <img :src="video.thumbnail" alt="" />
@@ -40,10 +36,7 @@
               />
             </svg>
           </div>
-          <button
-            class="button is-dark is-small"
-            @click="deleteVideo(video._id)"
-          >
+          <button class="button is-dark is-small" @click="deleteVideo(video._id)">
             Delete
           </button>
         </div>
@@ -54,11 +47,7 @@
           <p class="title is-4">{{ video.title }}</p>
           <video ref="player" controls :src="src"></video>
         </div>
-        <button
-          class="modal-close is-large"
-          aria-label="close"
-          @click="closeModal"
-        ></button>
+        <button class="modal-close is-large" aria-label="close" @click="closeModal"></button>
       </div>
     </div>
   </div>
@@ -77,31 +66,31 @@ export default {
       isHovering: false,
       isActiveModal: false,
       src: null
-    }
+    };
   },
   methods: {
     deleteVideo(id) {
       if (!confirm('Are you sure ?')) {
-        return
+        return;
       }
       this.$store
         .dispatch('videos/deleteVideo', id)
         .then(() => {})
-        .catch((error) => {
-          throw error.message
-        })
+        .catch(error => {
+          throw error.message;
+        });
     },
     activeModal() {
-      this.isActiveModal = true
-      this.src = 'http://localhost:8080/' + this.video.path
+      this.isActiveModal = true;
+      this.src = this.video.path;
     },
     closeModal() {
-      this.isActiveModal = false
-      this.$refs.player.pause()
-      this.$refs.player.currentTime = 0
+      this.isActiveModal = false;
+      this.$refs.player.pause();
+      this.$refs.player.currentTime = 0;
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -121,6 +110,10 @@ export default {
 
 .card-image {
   position: relative;
+}
+
+img {
+  object-fit: cover;
 }
 
 .overlay {

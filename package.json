@@ -13,11 +13,12 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/bulma": "^1.2.6",
     "@nuxtjs/pwa": "^3.0.0-0",
+    "moment": "^2.24.0",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {
-    "@nuxtjs/bulma": "^1.2.6",
     "@nuxtjs/eslint-config": "^1.0.1",
     "@nuxtjs/eslint-module": "^1.0.0",
     "babel-eslint": "^10.0.1",
