@@ -73,12 +73,7 @@ export default {
       if (!confirm('Are you sure ?')) {
         return;
       }
-      this.$store
-        .dispatch('videos/deleteVideo', id)
-        .then(() => {})
-        .catch(error => {
-          throw error.message;
-        });
+      this.$store.dispatch('videos/deleteVideo', id);
     },
     activeModal() {
       this.isActiveModal = true;

@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="columns">
-      <VideoCard v-for="(video, index) in videos" :key="index" :video="video" :data-index="index" />
+      <VideoCard
+        v-for="(video, index) in videos"
+        :key="index"
+        :video="video"
+        :data-index="index"
+      />
     </div>
   </div>
 </template>

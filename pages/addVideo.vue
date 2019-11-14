@@ -2,8 +2,18 @@
   <div>
     <h1>Add new video</h1>
     <form @submit.prevent="createVideo">
-      <BaseInput v-model.trim="video.title" label="Title" placeholder="Title" type="text" />
-      <BaseInput v-model.trim="video.url" label="Url Youtube" placeholder="Url" type="text" />
+      <BaseInput
+        v-model.trim="video.title"
+        label="Title"
+        placeholder="Title"
+        type="text"
+      />
+      <BaseInput
+        v-model.trim="video.url"
+        label="Url Youtube"
+        placeholder="Url"
+        type="text"
+      />
 
       <Preview
         v-on:addStartTime="addStartTime"
@@ -38,15 +48,12 @@
 <script>
 import moment from 'moment';
 import 'moment-duration-format';
-import BaseInput from '@/components/BaseInput.vue';
-import BaseButton from '@/components/BaseButton.vue';
-import Preview from '@/components/Preview.vue';
 
 export default {
   components: {
-    BaseInput,
-    BaseButton,
-    Preview
+    BaseInput: () => import('@/components/BaseInput.vue'),
+    BaseButton: () => import('@/components/BaseButton.vue'),
+    Preview: () => import('@/components/Preview.vue'),
   },
   data() {
     return {

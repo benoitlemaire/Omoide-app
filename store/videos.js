@@ -5,25 +5,25 @@ export const state = () => ({
   video: {}
 });
 export const mutations = {
-  ADD_VIDEO(state, video) {
+  addVideo(state, video) {
     state.videos.push(video);
   },
-  SET_VIDEOS(state, videos) {
+  setVideos(state, videos) {
     state.videos = videos;
   },
-  SET_VIDEO(state, video) {
+  setVideo(state, video) {
     state.video = video;
   },
-  DELETE_VIDEO(state, id) {
+  deleteVideo(state, id) {
     const index = state.videos.findIndex(video => video._id === id);
     state.videos.splice(index, 1);
   }
 };
 export const actions = {
-  createVideo({ commit, dispatch }, video) {
+  createVideo({ commit }, video) {
     return VideoService.postVideo(video)
       .then(() => {
-        commit('ADD_VIDEO', video);
+        commit('addVideo', video);
       })
       .catch(error => {
         throw error.message;
@@ -32,7 +32,7 @@ export const actions = {
   deleteVideo({ commit }, id) {
     return VideoService.deleteVideo(id)
       .then(response => {
-        commit('DELETE_VIDEO', id);
+        commit('deleteVideo', id);
       })
       .catch(error => {
         throw error;
@@ -40,12 +40,12 @@ export const actions = {
   },
   fetchVideos({ commit }) {
     return VideoService.getVideos().then(response => {
-      commit('SET_VIDEOS', response.data);
+      commit('setVideos', response.data);
     });
   },
   fetchVideo({ commit }, id) {
     return VideoService.getVideo(id).then(response => {
-      commit('SET_VIDEO', response.data);
+      commit('setVideo', response.data);
     });
   }
 };
