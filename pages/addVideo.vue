@@ -6,24 +6,22 @@
       <BaseInput v-model.trim="video.url" label="Url Youtube" placeholder="Url" type="text" />
 
       <BaseInput
+        @input="displayDurationTime"
         v-model.trim="video.startTime"
         label="Start time"
         placeholder="00:02:35"
         type="text"
-        @input="formatDate"
       />
 
       <BaseInput
+        @input="displayDurationTime"
         v-model.trim="endTime"
         label="End time"
         placeholder="00:02:35"
         type="text"
-        @input="formatDate"
       />
 
-      <button @click.prevent="setDurationTime">convert time</button>
-
-      <b>Duration video is : {{ durationFront }}</b>
+      <b v-if="video.duration">Duration video is : {{ video.duration }} minutes</b>
       <BaseButton type="submit">Envoyer</BaseButton>
     </form>
   </div>
@@ -42,28 +40,23 @@ export default {
   data() {
     return {
       video: this.createFreshVideoObject(),
-      endTime: '',
-      durationFront: null
+      endTime: ''
     };
   },
-  created() {
-    if (this.video.startTime && this.endTime !== '') {
-      this.setDurationTime();
-    }
-  },
   methods: {
-    setDurationTime() {
-      const start = this.formatDate(this.video.startTime);
-      const end = this.formatDate(this.endTime);
-
-      this.video.duration = end - start;
-      if (this.video.duration <= 60) {
-        this.durationFront = this.video.duration + ' secondes';
-      } else {
-        this.durationFront = moment.utc(this.video.duration * 1000).format('H:m:s') + ' minutes';
+    displayDurationTime() {
+      if (this.video.startTime && this.endTime !== '') {
+        this.setDurationTime();
       }
     },
-    formatDate(inputTime) {
+    setDurationTime() {
+      const start = this.formatToSeconds(this.video.startTime);
+      const end = this.formatToSeconds(this.endTime);
+
+      this.video.duration = end - start;
+      this.video.duration = moment.utc(this.video.duration * 1000).format('HH:mm:ss');
+    },
+    formatToSeconds(inputTime) {
       const a = inputTime.split(':');
       const seconds = +a[0] * 60 * 60 + +a[1] * 60 + +a[2];
 
@@ -85,7 +78,10 @@ export default {
       this.$nuxt.$loading.start();
 
       this.video.url = this.getYoutubeID(this.video.url);
-      this.video.startTime = this.formatDate(this.video.startTime);
+
+      // Convert string to seconds before request
+      this.video.startTime = this.formatToSeconds(this.video.startTime);
+      this.video.duration = this.formatToSeconds(this.video.duration);
 
       this.$store
         .dispatch('videos/createVideo', this.video)

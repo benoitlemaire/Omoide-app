@@ -1,11 +1,11 @@
 <template>
   <div class="column is-one-quarter">
-    <div class="card" @mouseover="isHovering = true" @mouseleave="isHovering = false">
+    <div @mouseover="isHovering = true" @mouseleave="isHovering = false" class="card">
       <div class="card-image">
         <figure class="image is-4by3">
           <img :src="video.thumbnail" alt="" />
         </figure>
-        <div v-show="isHovering" class="overlay" @click="activeModal">
+        <div v-show="isHovering" @click="activeModal" class="overlay">
           <div class="content">
             <div class="media-content">
               <p class="title is-4">{{ video.title }}</p>
@@ -36,18 +36,18 @@
               />
             </svg>
           </div>
-          <button class="button is-dark is-small" @click="deleteVideo(video._id)">
+          <button @click="deleteVideo(video._id)" class="button is-dark is-small">
             Delete
           </button>
         </div>
       </div>
-      <div class="modal" :class="{ 'is-active is-clipped': isActiveModal }">
-        <div class="modal-background" @click="closeModal"></div>
+      <div :class="{ 'is-active is-clipped': isActiveModal }" class="modal">
+        <div @click="closeModal" class="modal-background"></div>
         <div class="modal-content">
           <p class="title is-4">{{ video.title }}</p>
-          <video ref="player" controls :src="src"></video>
+          <video ref="player" :src="src" controls></video>
         </div>
-        <button class="modal-close is-large" aria-label="close" @click="closeModal"></button>
+        <button @click="closeModal" class="modal-close is-large" aria-label="close"></button>
       </div>
     </div>
   </div>
