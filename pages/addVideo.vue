@@ -5,17 +5,25 @@
       <BaseInput v-model.trim="video.title" label="Title" placeholder="Title" type="text" />
       <BaseInput v-model.trim="video.url" label="Url Youtube" placeholder="Url" type="text" />
 
+      <Preview
+        v-on:addStartTime="addStartTime"
+        v-on:addEndTime="addEndTime"
+        v-on:getDurationTime="getDurationTime"
+        v-if="video.url"
+        :videoId="getYoutubeID(video.url)"
+      />
+
       <BaseInput
-        @input="displayDurationTime"
         v-model.trim="video.startTime"
+        disabled
         label="Start time"
         placeholder="00:02:35"
         type="text"
       />
 
       <BaseInput
-        @input="displayDurationTime"
         v-model.trim="endTime"
+        disabled
         label="End time"
         placeholder="00:02:35"
         type="text"
@@ -29,13 +37,16 @@
 
 <script>
 import moment from 'moment';
+import 'moment-duration-format';
 import BaseInput from '@/components/BaseInput.vue';
 import BaseButton from '@/components/BaseButton.vue';
+import Preview from '@/components/Preview.vue';
 
 export default {
   components: {
     BaseInput,
-    BaseButton
+    BaseButton,
+    Preview
   },
   data() {
     return {
@@ -44,23 +55,33 @@ export default {
     };
   },
   methods: {
-    displayDurationTime() {
-      if (this.video.startTime && this.endTime !== '') {
-        this.setDurationTime();
+    addStartTime(time) {
+      this.video.startTime = this.convertTime(time);
+    },
+    addEndTime(time) {
+      this.endTime = this.convertTime(time);
+    },
+    getDurationTime(durationTime) {
+      this.video.duration = this.convertTime(durationTime);
+    },
+    convertTime(time) {
+      // Seconds to hh:mm:ss
+      if (typeof time === 'number') {
+        const duration = moment.duration(time, 'seconds');
+        const hms = duration.format('hh:mm:ss');
+        return hms;
       }
-    },
-    setDurationTime() {
-      const start = this.formatToSeconds(this.video.startTime);
-      const end = this.formatToSeconds(this.endTime);
 
-      this.video.duration = end - start;
-      this.video.duration = moment.utc(this.video.duration * 1000).format('HH:mm:ss');
-    },
-    formatToSeconds(inputTime) {
-      const a = inputTime.split(':');
-      const seconds = +a[0] * 60 * 60 + +a[1] * 60 + +a[2];
-
-      return seconds;
+      // String hh:mm:ss to seconds
+      const a = time.split(':');
+      if (a.length === 1) {
+        time = '00:00:' + time;
+        return moment.duration(time).asSeconds();
+      } else if (a.length === 2) {
+        time = '00:' + time;
+        return moment.duration(time).asSeconds();
+      }
+      return moment.duration(time).asSeconds();
     },
     getYoutubeID(url) {
       let ID = '';
@@ -76,12 +97,14 @@ export default {
     },
     createVideo() {
       this.$nuxt.$loading.start();
-
       this.video.url = this.getYoutubeID(this.video.url);
 
       // Convert string to seconds before request
-      this.video.startTime = this.formatToSeconds(this.video.startTime);
-      this.video.duration = this.formatToSeconds(this.video.duration);
+      this.video.startTime === '00'
+        ? (this.video.startTime = '00:00:00')
+        : (this.video.startTime = this.convertTime(this.video.startTime));
+
+      this.video.duration = this.convertTime(this.video.duration);
 
       this.$store
         .dispatch('videos/createVideo', this.video)
@@ -97,8 +120,9 @@ export default {
       this.video = this.createFreshVideoObject();
     },
     createFreshVideoObject() {
+      this.endTime = '';
       return {
-        title: '',
+        title: 'titre',
         url: '',
         startTime: '',
         duration: ''
@@ -108,4 +132,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+/*
+  Start time: 04:49
+  End time: 25:46
+
+  Duration: 20:57
+
+ */
+</style>

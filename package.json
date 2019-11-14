@@ -27,6 +27,8 @@
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.0.1",
     "http-server": "^0.11.1",
-    "prettier": "^1.16.4"
+    "moment-duration-format": "^2.3.2",
+    "prettier": "^1.16.4",
+    "vue-youtube": "^1.4.0"
   }
 }
