@@ -38,6 +38,5 @@ export default {
 .columns {
   flex-wrap: wrap;
   margin: -0.45em;
-  background: #141414;
 }
 </style>

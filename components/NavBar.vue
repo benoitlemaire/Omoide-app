@@ -1,16 +1,43 @@
 <template>
   <div>
-    <nuxt-link to="/">
-      List
-    </nuxt-link>
-    <nuxt-link to="/addVideo">
-      addVideo
-    </nuxt-link>
+    <nav
+      class="navbar"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <div class="navbar-brand">
+        <nuxt-link to="/">
+          Omoide
+        </nuxt-link>
+      </div>
+
+      <div
+        id="navbarBasicExample"
+        class="navbar-menu"
+      >
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <nuxt-link
+              to="/addVideo"
+            >
+              Ajouter une vidéo
+            </nuxt-link>
+          </div>
+        </div>
+      </div>
+    </nav>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+};
 </script>
 
-<style></style>
+<style scoped>
+.navbar-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

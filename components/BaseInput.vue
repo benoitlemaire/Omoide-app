@@ -4,6 +4,7 @@
     <input
       :value="value"
       v-bind="$attrs"
+      class="input"
       @input="updateValue"
       v-on="listeners"
     >
@@ -39,4 +40,14 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.input {
+  margin-bottom: 30px;
+  height: 60px;
+  font-size: 24px;
+  line-height: 28px;
+  border: none;
+  border-radius: 0;
+}
+
+</style>

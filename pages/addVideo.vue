@@ -1,35 +1,94 @@
 <template>
   <div>
-    <h1>Add new video</h1>
+    <h1 class="title has-text-centered">
+      Ajouter une vidéo
+    </h1>
     <form @submit.prevent="createVideo">
       <BaseInput
-        v-model.trim="video.title"
-        label="Title"
-        placeholder="Title"
-        type="text"
-      />
-      <BaseInput
         v-model.trim="video.url"
-        label="Url Youtube"
-        placeholder="Url"
+        placeholder="Lien de la vidéo Youtube"
         type="text"
       />
 
-      <Preview
-        v-if="video.url"
-        :video-id="getYoutubeID(video.url)"
-        @addStartTime="addStartTime"
-        @addEndTime="addEndTime"
-        @getDurationTime="getDurationTime"
-      />
+      <div class="columns">
+        <div class="column">
+          <Preview
+            v-if="video.url"
+            ref="youtubePlayer"
+            :video-id="getYoutubeID(video.url)"
+            @addStartTime="addStartTime"
+            @addEndTime="addEndTime"
+            @getDurationTime="getDurationTime"
+            @triggerGetTime="triggerGetTime"
+          />
+          <div
+            v-else
+            class="previsualition"
+          >
+            Prévisualisation
+          </div>
+        </div>
+        <div class="column">
+          <BaseInput
+            v-model.trim="video.title"
+            placeholder="Titre"
+            type="text"
+          />
 
-      <p>Début: {{ startTimeFront }}</p>
-      <p>Fin: {{ endTimeFront }}</p>
-      <p>Durée: {{ durationFront }}</p>
+          <p>Temps</p>
 
-      <BaseButton type="submit">
-        Envoyer
-      </BaseButton>
+          <div class="controls">
+            <div class="columns">
+              <div class="column is-half">
+                <BaseButton
+                  @click.prevent="triggerGetTime(0)"
+                >
+                  Début
+                </BaseButton>
+              </div>
+
+              <div class="column is-half">
+                <BaseButton
+                  @click.prevent="triggerGetTime(1)"
+                >
+                  Fin
+                </BaseButton>
+              </div>
+            </div>
+
+            <div class="columns">
+              <div class="column is-one-third">
+                <span>Début <b>{{ startTimeFront }}</b></span>
+              </div>
+              <div class="column is-one-third">
+                <span>Fin <b>{{ endTimeFront }}</b></span>
+              </div>
+              <div class="column is-one-third">
+                <span>Durée <b>{{ durationFront }}</b></span>
+              </div>
+            </div>
+          </div>
+
+          <textarea
+            class="textarea"
+            placeholder="Ajouter des tags séparés par un espace"
+          />
+
+          <BaseButton
+            class="is-primary"
+            type="submit"
+          >
+            Publier la vidéo
+          </BaseButton>
+
+          <BaseButton
+            disabled
+            type="submit"
+          >
+            Télécharger
+          </BaseButton>
+        </div>
+      </div>
     </form>
   </div>
 </template>
@@ -47,12 +106,15 @@ export default {
   data() {
     return {
       video: this.createFreshVideoObject(),
-      startTimeFront: '',
-      endTimeFront: '',
-      durationFront: '',
+      startTimeFront: 0,
+      endTimeFront: 0,
+      durationFront: 0,
     };
   },
   methods: {
+    triggerGetTime(option) {
+      this.$refs.youtubePlayer.getTime(option);
+    },
     addStartTime(time) {
       this.video.startTime = time;
       this.startTimeFront = this.convertTime(time);
@@ -117,7 +179,7 @@ export default {
       this.endTime = '';
       return {
         title: '',
-        url: 'https://www.youtube.com/watch?v=11-lpoJHu0U',
+        url: '',
         startTime: '',
         duration: '',
       };
@@ -125,3 +187,60 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.title {
+  margin-top: 80px;
+}
+
+.previsualition {
+  border: 1px solid #B0B0B0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  max-height: 340px;
+  color: #B0B0B0;
+  font-size: 24px;
+}
+
+.controls {
+  background: white;
+  margin-bottom: 30px;
+}
+
+p {
+  margin-bottom: 20px;
+  margin-top: -10px;
+  color: #B0B0B0;
+}
+
+b {
+  font-size: 24px;
+  line-height: 28px;
+  margin-left: 20px;
+}
+
+.is-one-third {
+  text-align: center;
+}
+
+.button {
+  margin-bottom: 10px;
+}
+
+.textarea {
+  margin-bottom: 20px;
+  border: none;
+}
+
+.column {
+  padding-top: 0;
+}
+
+textarea::placeholder {
+  color: #B0B0B0;
+  font-size: 16px;
+  line-height: 19px;
+}
+</style>

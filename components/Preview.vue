@@ -1,17 +1,10 @@
 <template>
-  <div>
-    <youtube
-      ref="youtube"
-      :video-id="videoId"
-    />
-
-    <button @click.prevent="getTime(0)">
-      Start Time
-    </button>
-    <button @click.prevent="getTime(1)">
-      End Time
-    </button>
-  </div>
+  <youtube
+    ref="youtube"
+    :video-id="videoId"
+    :fit-parent="true"
+    :resize="true"
+  />
 </template>
 
 <script>
@@ -20,6 +13,10 @@ export default {
     videoId: {
       type: String,
       default: '',
+    },
+    triggerGetTime: {
+      type: Function,
+      default: () => {},
     },
   },
   data() {
@@ -39,14 +36,17 @@ export default {
         .getCurrentTime()
         .then((result) => {
           const currentTime = this.roundDecimal(result);
+
           if (option === 0) {
             this.startTime = currentTime;
             this.$emit('addStartTime', this.startTime);
-          } else {
-            this.endTime = currentTime;
-            this.$emit('addEndTime', this.endTime);
-            this.$emit('getDurationTime', this.endTime - this.startTime);
+
+            return;
           }
+
+          this.endTime = currentTime;
+          this.$emit('addEndTime', this.endTime);
+          this.$emit('getDurationTime', this.endTime - this.startTime);
         })
         .catch((error) => {
           throw error;
@@ -61,4 +61,5 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+</style>
