@@ -1,7 +1,11 @@
 <template>
   <div>
-    <nuxt-link to="/">List</nuxt-link>
-    <nuxt-link to="/addVideo">addVideo</nuxt-link>
+    <nuxt-link to="/">
+      List
+    </nuxt-link>
+    <nuxt-link to="/addVideo">
+      addVideo
+    </nuxt-link>
   </div>
 </template>
 

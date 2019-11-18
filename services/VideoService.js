@@ -1,12 +1,13 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: `http://localhost:8080/api`,
+  baseURL: 'http://localhost:8080/api',
   withCredentials: false,
   headers: {
     Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
+    'Content-Type': 'application/json',
+  },
 });
 
 export default {
@@ -14,12 +15,12 @@ export default {
     return apiClient.get('/videos');
   },
   getVideo(id) {
-    return apiClient.get('/videos/' + id);
+    return apiClient.get(`/videos/${id}`);
   },
   postVideo(video) {
     return apiClient.post('/videos', video);
   },
   deleteVideo(id) {
-    return apiClient.delete('/videos/' + id);
-  }
+    return apiClient.delete(`/videos/${id}`);
+  },
 };

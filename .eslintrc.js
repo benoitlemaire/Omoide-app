@@ -1,20 +1,28 @@
 module.exports = {
   root: true,
   env: {
-    browser: true,
-    node: true
+    // this section will be used to determine which APIs are available to us
+    // (i.e are we running in a browser environment or a node.js env)
+    node: true,
+    browser: true
   },
   parserOptions: {
-    parser: 'babel-eslint'
+    parser: "babel-eslint",
+    // specifying a module sourcetype prevent eslint from marking import statements as errors
+    sourceType: "module"
   },
   extends: [
-    '@nuxtjs',
-    'prettier',
-    'prettier/vue',
-    'plugin:prettier/recommended',
-    'plugin:nuxt/recommended'
+    // use the recommended rule set for both plain javascript and vue
+    "airbnb-base",
+    "eslint:recommended",
+    "plugin:vue/recommended"
   ],
-  plugins: ['prettier'],
-  // add your custom rules here
-  rules: {}
+  rules: {
+    // we should always disable console logs and debugging in production
+    "no-console": process.env.NODE_ENV === "production" ? "error" : "off",
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "off",
+    "import/no-unresolved": 0,
+    "no-shadow": 0,
+    "import/no-extraneous-dependencies": 0
+  }
 };

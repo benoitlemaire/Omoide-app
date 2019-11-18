@@ -2,35 +2,34 @@
   <div>
     <h1>Add new video</h1>
     <form @submit.prevent="createVideo">
-      <BaseInput v-model.trim="video.title" label="Title" placeholder="Title" type="text" />
-      <BaseInput v-model.trim="video.url" label="Url Youtube" placeholder="Url" type="text" />
+      <BaseInput
+        v-model.trim="video.title"
+        label="Title"
+        placeholder="Title"
+        type="text"
+      />
+      <BaseInput
+        v-model.trim="video.url"
+        label="Url Youtube"
+        placeholder="Url"
+        type="text"
+      />
 
       <Preview
-        v-on:addStartTime="addStartTime"
-        v-on:addEndTime="addEndTime"
-        v-on:getDurationTime="getDurationTime"
         v-if="video.url"
-        :videoId="getYoutubeID(video.url)"
+        :video-id="getYoutubeID(video.url)"
+        @addStartTime="addStartTime"
+        @addEndTime="addEndTime"
+        @getDurationTime="getDurationTime"
       />
 
-      <BaseInput
-        v-model.trim="video.startTime"
-        disabled
-        label="Start time"
-        placeholder="00:02:35"
-        type="text"
-      />
+      <p>Début: {{ startTimeFront }}</p>
+      <p>Fin: {{ endTimeFront }}</p>
+      <p>Durée: {{ durationFront }}</p>
 
-      <BaseInput
-        v-model.trim="endTime"
-        disabled
-        label="End time"
-        placeholder="00:02:35"
-        type="text"
-      />
-
-      <b v-if="video.duration">Duration video is : {{ video.duration }} minutes</b>
-      <BaseButton type="submit">Envoyer</BaseButton>
+      <BaseButton type="submit">
+        Envoyer
+      </BaseButton>
     </form>
   </div>
 </template>
@@ -38,31 +37,32 @@
 <script>
 import moment from 'moment';
 import 'moment-duration-format';
-import BaseInput from '@/components/BaseInput.vue';
-import BaseButton from '@/components/BaseButton.vue';
-import Preview from '@/components/Preview.vue';
 
 export default {
   components: {
-    BaseInput,
-    BaseButton,
-    Preview
+    BaseInput: () => import('@/components/BaseInput.vue'),
+    BaseButton: () => import('@/components/BaseButton.vue'),
+    Preview: () => import('@/components/Preview.vue'),
   },
   data() {
     return {
       video: this.createFreshVideoObject(),
-      endTime: ''
+      startTimeFront: '',
+      endTimeFront: '',
+      durationFront: '',
     };
   },
   methods: {
     addStartTime(time) {
-      this.video.startTime = this.convertTime(time);
+      this.video.startTime = time;
+      this.startTimeFront = this.convertTime(time);
     },
     addEndTime(time) {
-      this.endTime = this.convertTime(time);
+      this.endTimeFront = this.convertTime(time);
     },
     getDurationTime(durationTime) {
-      this.video.duration = this.convertTime(durationTime);
+      this.video.duration = durationTime;
+      this.durationFront = this.convertTime(durationTime);
     },
     convertTime(time) {
       // Seconds to hh:mm:ss
@@ -75,23 +75,24 @@ export default {
       // String hh:mm:ss to seconds
       const a = time.split(':');
       if (a.length === 1) {
-        time = '00:00:' + time;
-        return moment.duration(time).asSeconds();
-      } else if (a.length === 2) {
-        time = '00:' + time;
-        return moment.duration(time).asSeconds();
+        const newTime = `00:00:${time}`;
+        return moment.duration(newTime).asSeconds();
+      } if (a.length === 2) {
+        const newTime = `00:${time}`;
+        return moment.duration(newTime).asSeconds();
       }
+
       return moment.duration(time).asSeconds();
     },
     getYoutubeID(url) {
       let ID = '';
-      url = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-      if (url[2] !== undefined) {
+      const newUrl = url.replace(/(>|<)/gi, '').split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
+      if (newUrl[2] !== undefined) {
         // eslint-disable-next-line no-useless-escape
-        ID = url[2].split(/[^0-9a-z_\-]/i);
-        ID = ID[0];
+        ID = newUrl[2].split(/[^0-9a-z_\-]/i);
+        [ID] = ID; // Is same as let ID = ID[0]
       } else {
-        ID = url;
+        ID = newUrl;
       }
       return ID;
     },
@@ -99,22 +100,15 @@ export default {
       this.$nuxt.$loading.start();
       this.video.url = this.getYoutubeID(this.video.url);
 
-      // Convert string to seconds before request
-      this.video.startTime === '00'
-        ? (this.video.startTime = '00:00:00')
-        : (this.video.startTime = this.convertTime(this.video.startTime));
-
-      this.video.duration = this.convertTime(this.video.duration);
-
       this.$store
         .dispatch('videos/createVideo', this.video)
         .then(() => {
           this.$nuxt.$loading.finish();
           this.$router.push({
-            name: 'index'
+            name: 'index',
           });
         })
-        .catch(error => {
+        .catch((error) => {
           throw error.message;
         });
       this.video = this.createFreshVideoObject();
@@ -122,22 +116,12 @@ export default {
     createFreshVideoObject() {
       this.endTime = '';
       return {
-        title: 'titre',
-        url: '',
+        title: '',
+        url: 'https://www.youtube.com/watch?v=11-lpoJHu0U',
         startTime: '',
-        duration: ''
+        duration: '',
       };
-    }
-  }
+    },
+  },
 };
 </script>
-
-<style>
-/*
-  Start time: 04:49
-  End time: 25:46
-
-  Duration: 20:57
-
- */
-</style>

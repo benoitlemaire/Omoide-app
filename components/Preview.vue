@@ -1,9 +1,16 @@
 <template>
   <div>
-    <youtube ref="youtube" :video-id="videoId"></youtube>
+    <youtube
+      ref="youtube"
+      :video-id="videoId"
+    />
 
-    <button @click.prevent="getTime(0)">Start Time</button>
-    <button @click.prevent="getTime(1)">End Time</button>
+    <button @click.prevent="getTime(0)">
+      Start Time
+    </button>
+    <button @click.prevent="getTime(1)">
+      End Time
+    </button>
   </div>
 </template>
 
@@ -12,28 +19,25 @@ export default {
   props: {
     videoId: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
   data() {
     return {
       startTime: '',
-      endTime: ''
+      endTime: '',
     };
   },
   computed: {
     player() {
       return this.$refs.youtube.player;
-    }
+    },
   },
   methods: {
-    playVideo() {
-      this.player.playVideo();
-    },
     getTime(option) {
       this.player
         .getCurrentTime()
-        .then(result => {
+        .then((result) => {
           const currentTime = this.roundDecimal(result);
           if (option === 0) {
             this.startTime = currentTime;
@@ -44,16 +48,16 @@ export default {
             this.$emit('getDurationTime', this.endTime - this.startTime);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           throw error;
         });
     },
     roundDecimal(nombre, precision) {
-      precision = precision || 1;
-      const tmp = 10 ** precision;
+      const afterComma = precision || 1;
+      const tmp = 10 ** afterComma;
       return Math.round(nombre * tmp) / tmp;
-    }
-  }
+    },
+  },
 };
 </script>
 
