@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div>
     <NavBar />
     <nuxt />
   </div>
@@ -13,9 +13,7 @@ export default {
 };
 </script>
 
-<style>
-@import url('https://fonts.googleapis.com/css?family=Rubik&display=swap');
-
+<style lang="scss">
 html {
   font-family: 'Rubik', sans-serif;
   font-size: 16px;
@@ -25,6 +23,7 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  background: #F3F3F3;
 }
 
 *,
@@ -36,7 +35,6 @@ html {
 
 .container {
   max-width: 1440px;
-  background: #F3F3F3;
 }
 
 .navbar {
@@ -44,6 +42,7 @@ html {
 }
 
 iframe {
+  width: 100%;
   max-width: 708px;
 }
 </style>

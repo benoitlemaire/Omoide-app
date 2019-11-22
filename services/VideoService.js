@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
 
 const apiClient = axios.create({
@@ -11,8 +10,14 @@ const apiClient = axios.create({
 });
 
 export default {
-  getVideos() {
+  getAllVideos() {
     return apiClient.get('/videos');
+  },
+  getVideos() {
+    return apiClient.get('/videos/1');
+  },
+  getVideosPerPage(page) {
+    return apiClient.get(`/videos/${page}`);
   },
   getVideo(id) {
     return apiClient.get(`/videos/${id}`);

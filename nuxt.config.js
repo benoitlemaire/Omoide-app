@@ -20,6 +20,10 @@ export default {
         type: 'image/x-icon',
         href: '/favicon.ico',
       },
+      {
+        href: 'https://fonts.googleapis.com/css?family=Rubik&display=swap',
+        rel: 'stylesheet',
+      },
     ],
   },
   /*
@@ -35,6 +39,7 @@ export default {
    */
   plugins: [
     '@/plugins/vue-youtube.js',
+    '@/plugins/vuelidate.js',
   ],
   /*
    ** Nuxt.js dev-modules
@@ -59,6 +64,9 @@ export default {
    ** Build configuration
    */
   build: {
+    transpile: [
+      'vee-validate/dist/rules',
+    ],
     /*
      ** You can extend webpack config here
      */

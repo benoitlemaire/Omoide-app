@@ -2,8 +2,6 @@
   <youtube
     ref="youtube"
     :video-id="videoId"
-    :fit-parent="true"
-    :resize="true"
   />
 </template>
 

@@ -21,11 +21,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+$btn-color: #6913FE;
+
 .button {
   width: 100%;
-  border-color: #6913FE;
-  color: #6913FE;
+  border-color: $btn-color;
+  color: $btn-color;
   border-radius: 0;
   border-width: 2px;
   min-height: 60px;
@@ -35,11 +37,15 @@ export default {
 
 .is-primary {
   color: white;
-  background: rgba(105, 19, 254, 0.5);
   border: none;
+  background: $btn-color;
 }
 
 .is-primary:hover {
+  background: $btn-color;
+}
+
+.is-primary:disabled {
   background: rgba(105, 19, 254, 0.5);
 }
 </style>

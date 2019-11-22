@@ -1,101 +1,162 @@
 <template>
-  <div>
-    <h1 class="title has-text-centered">
-      Ajouter une vidéo
-    </h1>
-    <form @submit.prevent="createVideo">
-      <BaseInput
-        v-model.trim="video.url"
-        placeholder="Lien de la vidéo Youtube"
-        type="text"
-      />
+  <div class="container">
+    <div class="container-medium">
+      <h1 class="title has-text-centered">
+        Ajouter une vidéo
+      </h1>
+      <form @submit.prevent="createVideo">
+        <BaseInput
+          v-model.trim="youtubeUrlFront"
+          placeholder="Lien de la vidéo Youtube"
+          type="text"
+          @blur="$v.youtubeUrlFront.$touch()"
+        />
 
-      <div class="columns">
-        <div class="column">
-          <Preview
-            v-if="video.url"
-            ref="youtubePlayer"
-            :video-id="getYoutubeID(video.url)"
-            @addStartTime="addStartTime"
-            @addEndTime="addEndTime"
-            @getDurationTime="getDurationTime"
-            @triggerGetTime="triggerGetTime"
-          />
-          <div
-            v-else
-            class="previsualition"
+        <template v-if="$v.youtubeUrlFront.$error">
+          <p
+            v-if="!$v.youtubeUrlFront.required"
+            class="help is-danger"
           >
-            Prévisualisation
-          </div>
-        </div>
-        <div class="column">
-          <BaseInput
-            v-model.trim="video.title"
-            placeholder="Titre"
-            type="text"
-          />
+            Une url Youtube est requise
+          </p>
+          <p
+            v-if="!$v.youtubeUrlFront.isValidUrl"
+            class="help is-danger"
+          >
+            L'url n'est pas valide
+          </p>
+        </template>
 
-          <p>Temps</p>
-
-          <div class="controls">
-            <div class="columns">
-              <div class="column is-half">
-                <BaseButton
-                  @click.prevent="triggerGetTime(0)"
-                >
-                  Début
-                </BaseButton>
-              </div>
-
-              <div class="column is-half">
-                <BaseButton
-                  @click.prevent="triggerGetTime(1)"
-                >
-                  Fin
-                </BaseButton>
-              </div>
+        <div class="columns">
+          <div class="column is-three-fifths">
+            <div v-if="youtubeUrlFront && !$v.youtubeUrlFront.$error">
+              <Preview
+                ref="youtubePlayer"
+                :video-id="getYoutubeID(youtubeUrlFront)"
+                @addStartTime="addStartTime"
+                @addEndTime="addEndTime"
+                @getDurationTime="getDurationTime"
+                @triggerGetTime="triggerGetTime"
+              />
             </div>
 
-            <div class="columns">
-              <div class="column is-one-third">
-                <span>Début <b>{{ startTimeFront }}</b></span>
-              </div>
-              <div class="column is-one-third">
-                <span>Fin <b>{{ endTimeFront }}</b></span>
-              </div>
-              <div class="column is-one-third">
-                <span>Durée <b>{{ durationFront }}</b></span>
-              </div>
+            <div
+              v-else
+              class="previsualition"
+            >
+              Prévisualisation
             </div>
           </div>
+          <div class="column">
+            <BaseInput
+              v-model.trim="video.title"
+              placeholder="Titre"
+              type="text"
+              :disabled="$v.youtubeUrlFront.$invalid"
+              @blur="$v.video.title.$touch()"
+            />
 
-          <textarea
-            class="textarea"
-            placeholder="Ajouter des tags séparés par un espace"
-          />
+            <template v-if="$v.video.title.$error">
+              <p
+                v-if="!$v.video.title.required"
+                class="help is-danger"
+              >
+                Le titre est requis
+              </p>
 
-          <BaseButton
-            class="is-primary"
-            type="submit"
-          >
-            Publier la vidéo
-          </BaseButton>
+              <p
+                v-if="!$v.video.title.maxLength"
+                class="help is-danger"
+              >
+                Le titre doit contenir moins de 60 caractères
+              </p>
+            </template>
 
-          <BaseButton
-            disabled
-            type="submit"
-          >
-            Télécharger
-          </BaseButton>
+            <p>Temps</p>
+
+            <div class="controls">
+              <div class="columns">
+                <div class="column is-half">
+                  <BaseButton
+                    :disabled="$v.video.title.$invalid"
+                    @click.prevent="triggerGetTime(0)"
+                  >
+                    Début
+                  </BaseButton>
+                </div>
+
+                <div class="column is-half">
+                  <BaseButton
+                    :disabled="!video.title"
+                    @click.prevent="triggerGetTime(1)"
+                  >
+                    Fin
+                  </BaseButton>
+                </div>
+              </div>
+
+              <div class="columns">
+                <div class="column is-one-third">
+                  <span>Début <b>{{ startTimeFront }}</b></span>
+                </div>
+                <div class="column is-one-third">
+                  <span>Fin <b>{{ endTimeFront }}</b></span>
+                </div>
+                <div class="column is-one-third">
+                  <span>Durée <b>{{ durationFront }}</b></span>
+                </div>
+              </div>
+              <template v-if="video.duration">
+                <p
+                  v-if="!$v.video.duration.required"
+                  class="help is-danger"
+                >
+                  Une durée est requise
+                </p>
+                <p
+                  v-if="!$v.video.duration.maxValue"
+                  class="help is-danger"
+                >
+                  La durée ne peut pas être supérieur à 10 minutes
+                </p>
+              </template>
+            </div>
+
+            <textarea
+              class="textarea"
+              placeholder="Ajouter des tags séparés par un espace"
+            />
+
+            <BaseButton
+              class="is-primary"
+              type="submit"
+              :disabled="$v.$anyError"
+            >
+              Publier la vidéo
+            </BaseButton>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+
+
+      <article
+        v-if="backendError"
+        class="message is-danger"
+      >
+        <div class="message-body">
+          Il y a eu une erreur avec le serveur. Réessayez plus tard.
+        </div>
+      </article>
+    </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
 import 'moment-duration-format';
+import { required, maxValue, maxLength } from 'vuelidate/lib/validators';
+
+const isValidUrl = (value) => (!!value.includes('https://www.youtube.com/watch?v='));
 
 export default {
   components: {
@@ -106,10 +167,29 @@ export default {
   data() {
     return {
       video: this.createFreshVideoObject(),
+      youtubeUrlFront: '',
       startTimeFront: 0,
       endTimeFront: 0,
       durationFront: 0,
+      backendError: false,
     };
+  },
+  validations: {
+    youtubeUrlFront: {
+      required,
+      isValidUrl,
+    },
+    video: {
+
+      title: {
+        required,
+        maxLength: maxLength(60),
+      },
+      duration: {
+        required,
+        maxValue: maxValue(600),
+      },
+    },
   },
   methods: {
     triggerGetTime(option) {
@@ -154,26 +234,29 @@ export default {
         ID = newUrl[2].split(/[^0-9a-z_\-]/i);
         [ID] = ID; // Is same as let ID = ID[0]
       } else {
-        ID = newUrl;
+        [ID] = newUrl;
       }
+
       return ID;
     },
     createVideo() {
-      this.$nuxt.$loading.start();
-      this.video.url = this.getYoutubeID(this.video.url);
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        this.$nuxt.$loading.start();
+        this.video.url = this.getYoutubeID(this.youtubeUrlFront);
 
-      this.$store
-        .dispatch('videos/createVideo', this.video)
-        .then(() => {
-          this.$nuxt.$loading.finish();
-          this.$router.push({
-            name: 'index',
+        this.$store
+          .dispatch('videos/createVideo', this.video)
+          .then(() => {
+            this.$nuxt.$loading.finish();
+            this.$router.push({
+              name: 'index',
+            });
+            this.$store.dispatch('videos/resetInfiniteScroll');
+          }).catch(() => {
+            this.backendError = true;
           });
-        })
-        .catch((error) => {
-          throw error.message;
-        });
-      this.video = this.createFreshVideoObject();
+      }
     },
     createFreshVideoObject() {
       this.endTime = '';
@@ -189,8 +272,13 @@ export default {
 </script>
 
 <style scoped>
+.container-medium {
+  max-width: 1110px;
+  margin: 0 auto;
+}
+
 .title {
-  margin-top: 80px;
+  padding-top: 80px;
 }
 
 .previsualition {
@@ -218,7 +306,6 @@ p {
 b {
   font-size: 24px;
   line-height: 28px;
-  margin-left: 20px;
 }
 
 .is-one-third {
@@ -232,6 +319,10 @@ b {
 .textarea {
   margin-bottom: 20px;
   border: none;
+}
+
+.input {
+  margin-bottom: 30px;
 }
 
 .column {
